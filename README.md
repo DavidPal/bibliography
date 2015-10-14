@@ -1,5 +1,5 @@
 # bibliography
-Beautifier of BibTex files
+Beautifier of BibTeX files
 
 Usage
 -----
