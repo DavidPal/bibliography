@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # BibTeX bibliography beautifier.
 #
 # Author: David Pal <davidko.pal@gmail.com>
@@ -18,12 +20,12 @@ import string
 
 entry_types= {
                'article'       : 'Article',
-	       'book'          : 'Book',
+               'book'          : 'Book',
                'booklet'       : 'Booklet',
                # 'Conference' is the same as 'InProceedings'
                'conference'    : 'InProceedings',
                'inbook'        : 'InBook',
-	       'incollection'  : 'InCollection',
+               'incollection'  : 'InCollection',
                'inproceedings' : 'InProceedings',
                'manual'        : 'Manual',
                'mastersthesis' : 'MastersThesis',
@@ -33,7 +35,7 @@ entry_types= {
                'techreport'    : 'TechReport',
                'unpublished'   : 'Unpublished',
                'string'        : 'String',
-	      }
+             }
 
 def Format(text):
 	return ' '.join(text.split())
