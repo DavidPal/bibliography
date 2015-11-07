@@ -3,7 +3,7 @@
 # BibTeX bibliography beautifier.
 #
 # Author: David Pal <davidko.pal@gmail.com>
-# Date: September 2013 -- September 2015
+# Date: 2013, 2014, 2015
 #
 # Usage:
 #
@@ -37,6 +37,21 @@ entry_types= {
                'string'        : 'String',
              }
 
+months = {
+                'jan'  :  'January',
+                'feb'  :  'Februry',
+                'mar'  :  'March',
+                'apr'  :  'April',
+                'may'  :  'May',
+                'jun'  :  'June',
+                'jul'  :  'July',
+                'aug'  :  'August',
+                'sep'  :  'September',
+                'oct'  :  'October',
+                'nov'  :  'November',
+                'dec'  :  'December',
+         }
+
 def Format(text):
 	return ' '.join(text.split())
 
@@ -65,10 +80,9 @@ def FindMatchingParenthesis(text):
 	return (text[:end], text[end:])
 
 def RemoveBraces(text):
-	text = text.strip()
-	if text[0] in ['{', '\"']:
+	if text[0] == '{':
 		 text = text[1:]
-	if text[-1] in ['}', '\"']:
+	if text[-1] == '}':
 		 text = text[:-1]
 	return text
 
@@ -79,19 +93,36 @@ def NormalizeAuthor(text):
 	return parts[0].strip()
 
 def NormalizeAuthors(text):
-	text = RemoveBraces(text)
 	authors = text.split(' and ')
-	return '{' + ' and '.join([NormalizeAuthor(author) for author in authors]) + '}'
+	return ' and '.join([NormalizeAuthor(author) for author in authors])
 
 def NormalizePages(text):
-	text = RemoveBraces(text)
 	parts = text.split('--', 1)
 	if not '--' in text:
 		parts = text.split('-', 1)
 	normalized = parts[0].strip()
 	if len(parts) >= 2:
-		normalized = parts[0].strip() + "--" + parts[1].strip()
-	return '{' + normalized + '}'
+		normalized = parts[0].strip() + '--' + parts[1].strip()
+	return normalized
+
+def SafeParseInt(text):
+	try:
+        	return int(text)
+	except ValueError:
+		return None
+
+def NormalizeYear(text):
+	year = SafeParseInt(text)
+	if not year:
+		return text.strip()
+	if (year >= 10) and (year <= 99):
+		return str(1900 + year)
+	return str(year)
+
+def NormalizeMonth(text):
+	if text[:3] in months:
+		return months[text[:3]]
+	return text
 
 
 # An entry object
@@ -110,7 +141,7 @@ class Entry(object):
 		text = text[m.end(2):]
 		text, rest = FindMatchingParenthesis(text)
 
-		m = re.match('\s*([-:\w]+)\s*,\s*', text)
+		m = re.match('\s*([^\s]+)\s*,\s*', text)
 		if m:
 			self.entry_name = m.group(1)
 			text = text[m.end():]
@@ -128,25 +159,21 @@ class Entry(object):
 			key = CamelCase(key)
 		text = text[m.end():]
 
+		value = ''
 		if text[0] == '{':
-			text, rest = FindMatchingParenthesis(text)
-			self.rows[key] = text
+			value, rest = FindMatchingParenthesis(text)
+			value = RemoveBraces(value)
 		elif text[0] == '\"':
-			m = re.match('("[^\"]+")\s*,?\s*', text)
-			self.rows[key] = m.group(1)
+			m = re.match('^"([^\"]+)"\s*,?\s*', text)
+			value = m.group(1)
 			rest = text[m.end():]
 		else:
 			m = re.match('\s*(\w+)\s*,?\s*', text)
-			rest = text[m.end():]
 			value = m.group(1)
-			if re.match('^[0-9]*$', value):
-				self.rows[key] = '{' + value + '}'
-			else:
-				self.rows[key] = value
+			rest = text[m.end():]
 
+		self.rows[key] = value.strip()
 		return rest
-
-
 
 	def NormalizedEntryType(self):
 		entry_type = self.entry_type.lower()
@@ -171,7 +198,12 @@ class Entry(object):
 					value = NormalizeAuthors(value)
 				if (key == 'Pages'):
 					value = NormalizePages(value)
-			s += Format(value)
+				if (key == 'Year'):
+					value = NormalizeYear(value)
+				if (key == 'Month'):
+					value = NormalizeMonth(value)
+
+			s += '{' + Format(value) + '}'
 			if self.entry_type != 'String':
 				s += ','
 			s += '\n'
@@ -186,7 +218,6 @@ class Entry(object):
 		if self.entry_type in priorities:
 			return priorities[self.entry_type]
 		return 0
-
 
 
 def ParseEntries(text):
@@ -218,8 +249,12 @@ def ReadFile():
 	return text
 
 # main
-text = ReadFile()
-entries = ParseEntries(text)
-entries = SortEntries(entries)
-for entry in entries:
-	print(entry.ToString())
+def main():
+	text = ReadFile()
+	entries = ParseEntries(text)
+	entries = SortEntries(entries)
+	for entry in entries:
+		print(entry.ToString())
+
+if __name__ == "__main__":
+    main()
