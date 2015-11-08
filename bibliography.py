@@ -14,9 +14,9 @@
 #
 #   bibliography.py input.bib > output.bib
 
-import sys
 import re
 import string
+import sys
 
 entry_types= {
                'article'       : 'Article',
@@ -55,7 +55,7 @@ months = {
 def Format(text):
 	return ' '.join(text.split())
 
-def CamelCase(text):
+def Capitalize(text):
 	word_start = True
 	s = ''
 	for c in text.lower():
@@ -120,8 +120,9 @@ def NormalizeYear(text):
 	return str(year)
 
 def NormalizeMonth(text):
-	if text[:3] in months:
-		return months[text[:3]]
+	prefix = text[:3].lower()
+	if prefix in months:
+		return months[prefix]
 	return text
 
 
@@ -156,7 +157,7 @@ class Entry(object):
 			return None
 		key = m.group(1)
 		if not self.entry_type == 'String':
-			key = CamelCase(key)
+			key = Capitalize(key)
 		text = text[m.end():]
 
 		value = ''
@@ -256,5 +257,5 @@ def main():
 	for entry in entries:
 		print(entry.ToString())
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
