@@ -10,4 +10,4 @@ python:
 install:
   - pip install nose unittest2 coveralls
 
-script: nosetest
+script: nosetests
