@@ -1,4 +1,7 @@
 # bibliography
+
+[![Build Status](https://travis-ci.org/DavidPal/bibliography.svg?branch=master)](https://travis-ci.org/DavidPal/bibliography)
+
 Beautifier of BibTeX files.
 
 It has the following features:
