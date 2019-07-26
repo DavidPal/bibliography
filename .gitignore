@@ -1,5 +1,9 @@
 # Python temporary file
 *.pyc
+__pycache__/
+
+# PyCharm files
+.idea/
 
 # Vim temporary files
 *.swp
