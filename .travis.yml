@@ -13,7 +13,7 @@ python:
   - "nightly"  # nightly build
 
 install:
-  - "pip install unittest2 nose coveralls pytest"
+  - "pip install unittest2 nose coveralls pytest pylint"
 
 script:
   - "py.test --verbose"
