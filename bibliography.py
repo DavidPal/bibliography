@@ -1,41 +1,53 @@
 #!/usr/bin/env python
 
-# BibTeX bibliography beautifier.
-#
-# Author: David Pal <davidko.pal@gmail.com>
-# Date: 2013-2019
-#
-# Usage:
-#
-#   bibliography.py input.bib
-#
-# The script prints the formatted version on the console.
-# To redirect into a file, use:
-#
-#   bibliography.py input.bib > output.bib
+"""BibTeX bibliography beautifier.
+
+Author: David Pal <davidko.pal@gmail.com>
+Date: 2013-2019
+
+Usage:
+
+   bibliography.py input.bib
+
+The script prints the formatted version on the console.
+To redirect into a file, use:
+
+   bibliography.py input.bib > output.bib
+"""
 
 import re
 import sys
 
-entry_types = {
-    'article': 'Article',
-    'book': 'Book',
-    'booklet': 'Booklet',
-    'conference': 'InProceedings',  # 'Conference' is the same as 'InProceedings'
-    'inbook': 'InBook',
-    'incollection': 'InCollection',
+# Dictionary mapping lower-case type of bibliographic entry to its proper spelling.
+ENTRY_TYPES = {
+    'article':       'Article',
+    'book':          'Book',
+    'booklet':       'Booklet',
+    'conference':    'InProceedings',  # 'Conference' is the same as 'InProceedings'
+    'inbook':        'InBook',
+    'incollection':  'InCollection',
     'inproceedings': 'InProceedings',
-    'manual': 'Manual',
+    'manual':        'Manual',
     'mastersthesis': 'MastersThesis',
-    'misc': 'Misc',
-    'phdthesis': 'PhDThesis',
-    'proceedings': 'Proceedings',
-    'techreport': 'TechReport',
-    'unpublished': 'Unpublished',
-    'string': 'String',
+    'misc':          'Misc',
+    'phdthesis':     'PhDThesis',
+    'proceedings':   'Proceedings',
+    'techreport':    'TechReport',
+    'unpublished':   'Unpublished',
+    'string':        'String',
 }
 
-months = {
+# Dictionary mapping entry type to their priority.
+# Entries not listed have priority zero.
+ENTRY_PRORITIES = {
+    'String': -99,
+    'Proceedings': 99,
+    'Book': 99,
+}
+
+# Dictionary mapping a lower-case 3 letter prefix of a calendar month
+# to its proper spelling.
+MONTHS = {
     'jan': 'January',
     'feb': 'Februry',
     'mar': 'March',
@@ -52,21 +64,24 @@ months = {
 
 
 def format_text(text):
+    """Removes unnecessary white space between words."""
     return ' '.join(text.split())
 
 
 def capitalize(text):
+    """Capitalizes initial letters in words in a string."""
     word_start = True
-    s = ''
-    for c in text.lower():
+    output = ''
+    for char in text.lower():
         if word_start:
-            c = c.upper()
-        word_start = not c.isalpha()
-        s = s + c
-    return s
+            char = char.upper()
+        word_start = not char.isalpha()
+        output += char
+    return output
 
 
-def find_matching_parenthesis(text):
+def find_matching_closing_brace(text):
+    """Finds closing brace in a string that matches '{' + string."""
     nesting = 1
     end = 0
     for i in range(1, len(text)):
@@ -82,6 +97,7 @@ def find_matching_parenthesis(text):
 
 
 def remove_braces(text):
+    """Removes opening brace from the beginning and closing brace from the end of a string."""
     if text[0] == '{':
         text = text[1:]
     if text[-1] == '}':
@@ -90,6 +106,7 @@ def remove_braces(text):
 
 
 def normalize_author(text):
+    """Puts an authors name into canonical form."""
     parts = text.split(',', 1)
     if len(parts) >= 2:
         return format_text(parts[1]) + ' ' + format_text(parts[0].strip())
@@ -97,11 +114,13 @@ def normalize_author(text):
 
 
 def normalize_authors(text):
+    """Puts a list of authors' names into canonical form."""
     authors = text.split(' and ')
     return ' and '.join([normalize_author(author) for author in authors])
 
 
 def normalize_pages(text):
+    """Puts the pages field into the canonical form."""
     parts = text.split('--', 1)
     if '--' not in text:
         parts = text.split('-', 1)
@@ -112,6 +131,7 @@ def normalize_pages(text):
 
 
 def safe_parse_int(text):
+    """Converts string to an integer or returns None if that is not possible."""
     try:
         return int(text)
     except ValueError:
@@ -119,6 +139,7 @@ def safe_parse_int(text):
 
 
 def normalize_year(text):
+    """Puts year into canonical form."""
     year = safe_parse_int(text)
     if not year:
         return text.strip()
@@ -128,81 +149,93 @@ def normalize_year(text):
 
 
 def normalize_month(text):
+    """Puts name of a month into canonical form."""
     prefix = text[:3].lower()
-    if prefix in months:
-        return months[prefix]
+    if prefix in MONTHS:
+        return MONTHS[prefix]
     return text
 
 
-# An entry object
+def normalize_entry_type(self):
+    """Puts the type of an entry into canonical form."""
+    entry_type = self.entry_type.lower()
+    if entry_type in ENTRY_TYPES:
+        entry_type = ENTRY_TYPES[entry_type]
+    return entry_type
+
+
 class Entry(object):
+    """Entry represents a bibliographic entry.
+
+    Attributes:
+        entry_type
+        entry_name
+        fields
+    """
+
     def __init__(self):
         self.entry_type = 'UNKNOWN'
         self.entry_name = ''
-        self.rows = {}
+        self.fields = {}
 
     def parse_from_string(self, text):
-        m = re.match('\\s*@\\s*(\\w+)\\s*({)\\s*', text)
-        if not m:
+        """Parses the entry from a string that appears first in the string."""
+        match = re.match('\\s*@\\s*(\\w+)\\s*({)\\s*', text)
+        if not match:
             return None
-        self.entry_type = m.group(1)
-        self.entry_type = self.normalized_entry_type()
-        text = text[m.end(2):]
-        text, rest = find_matching_parenthesis(text)
+        self.entry_type = match.group(1)
+        self.entry_type = normalize_entry_type(self.entry_type)
+        text = text[match.end(2):]
+        text, rest = find_matching_closing_brace(text)
 
-        m = re.match('\\s*([^\\s]+)\\s*,\\s*', text)
-        if m:
-            self.entry_name = m.group(1)
-            text = text[m.end():]
+        match = re.match('\\s*([^\\s]+)\\s*,\\s*', text)
+        if match:
+            self.entry_name = match.group(1)
+            text = text[match.end():]
 
         while text:
-            text = self.parse_row(text)
+            text = self.parse_field(text)
         return rest
 
-    def parse_row(self, text):
-        m = re.match('\\s*,?\\s*([\\w-]+)\\s*=\\s*', text)
-        if not m:
+    def parse_field(self, text):
+        """Parses the field of an entry from a string that appears first in the string."""
+        match = re.match('\\s*,?\\s*([\\w-]+)\\s*=\\s*', text)
+        if not match:
             return None
-        key = m.group(1)
-        if not self.entry_type == 'String':
+        key = match.group(1)
+        if self.entry_type != 'String':
             key = capitalize(key)
-        text = text[m.end():]
+        text = text[match.end():]
 
         value = ''
         if text[0] == '{':
-            value, rest = find_matching_parenthesis(text)
+            value, rest = find_matching_closing_brace(text)
             value = remove_braces(value)
         elif text[0] == '\"':
-            m = re.match('^"([^\"]+)"\\s*,?\\s*', text)
-            value = m.group(1)
-            rest = text[m.end():]
+            match = re.match('^"([^\"]+)"\\s*,?\\s*', text)
+            value = match.group(1)
+            rest = text[match.end():]
         else:
-            m = re.match('\\s*(\\w+)\\s*,?\\s*', text)
-            value = m.group(1)
-            rest = text[m.end():]
+            match = re.match('\\s*(\\w+)\\s*,?\\s*', text)
+            value = match.group(1)
+            rest = text[match.end():]
 
-        self.rows[key] = value.strip()
+        self.fields[key] = value.strip()
         return rest
 
-    def normalized_entry_type(self):
-        entry_type = self.entry_type.lower()
-        if entry_type in entry_types:
-            entry_type = entry_types[entry_type]
-        return entry_type
-
     def __str__(self):
-        s = '@' + self.entry_type + '{'
+        output = '@' + self.entry_type + '{'
         if self.entry_name:
-            s += self.entry_name + ','
-        s += '\n'
-        keys = sorted(self.rows.keys())
+            output += self.entry_name + ','
+        output += '\n'
+        keys = sorted(self.fields.keys())
         for key in keys:
-            s += + 4 * ' '
-            s += key
-            s += max(0, 13 - len(key)) * ' '
-            s += ' = '
-            value = self.rows[key]
-            if not self.entry_type == 'String':
+            output += + 4 * ' '
+            output += key
+            output += max(0, 13 - len(key)) * ' '
+            output += ' = '
+            value = self.fields[key]
+            if self.entry_type != 'String':
                 if key in ['Author', 'Editor']:
                     value = normalize_authors(value)
                 if key == 'Pages':
@@ -212,45 +245,44 @@ class Entry(object):
                 if key == 'Month':
                     value = normalize_month(value)
 
-            s += '{' + format_text(value) + '}'
+            output += '{' + format_text(value) + '}'
             if self.entry_type != 'String':
-                s += ','
-            s += '\n'
-        return s + '}'
+                output += ','
+            output += '\n'
+        return output + '}'
 
-    def sort_key(self):
-        priorities = {
-            'String': -99,
-            'Proceedings': 99,
-            'Book': 99,
-        }
-        if self.entry_type in priorities:
-            return priorities[self.entry_type]
+    def priority(self):
+        """Returns """
+        if self.entry_type in ENTRY_PRORITIES:
+            return ENTRY_PRORITIES[self.entry_type]
         return 0
 
 
 def parse_entries(text):
+    """Parses a list of bibliographic entries from a string."""
     entries = []
     while True:
-        e = Entry()
-        text = e.parse_from_string(text)
+        entry = Entry()
+        text = entry.parse_from_string(text)
         if not text:
             break
-        entries.append(e)
+        entries.append(entry)
     return entries
 
 
 def sort_entries(entries):
+    """Sorts a list of entries in the canonical order."""
     entries.sort(key=lambda e: e.entry_name)
     entries.sort(key=lambda e: e.entry_type)
-    entries.sort(key=lambda e: e.sort_key())
+    entries.sort(key=lambda e: e.priority())
     return entries
 
 
 def read_file():
+    """Reads content of a file."""
     lines = []
-    with open(sys.argv[1], 'r') as f:
-        for line in f:
+    with open(sys.argv[1], 'r') as file:
+        for line in file:
             if line.strip().startswith('%'):
                 print(line.strip())
             else:
@@ -259,8 +291,8 @@ def read_file():
     return text
 
 
-# main
 def main():
+    """Reads the input bibfile and prints out its properly formatted version."""
     text = read_file()
     entries = parse_entries(text)
     entries = sort_entries(entries)
