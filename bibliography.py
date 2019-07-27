@@ -143,7 +143,7 @@ def normalize_year(text):
     year = safe_parse_int(text)
     if not year:
         return text.strip()
-    if (year >= 10) and (year <= 99):
+    if 10 <= year <= 99:
         return str(1900 + year)
     return str(year)
 
@@ -156,12 +156,12 @@ def normalize_month(text):
     return text
 
 
-def normalize_entry_type(self):
+def normalize_entry_type(entry_type):
     """Puts the type of an entry into canonical form."""
-    entry_type = self.entry_type.lower()
-    if entry_type in ENTRY_TYPES:
-        entry_type = ENTRY_TYPES[entry_type]
-    return entry_type
+    entry_type = entry_type.strip().lower()
+    if entry_type not in ENTRY_TYPES:
+        return entry_type
+    return ENTRY_TYPES[entry_type]
 
 
 class Entry(object):

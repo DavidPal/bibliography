@@ -17,4 +17,5 @@ install:
 
 script:
   - "py.test --verbose"
-  - "pylint bibliography"
+  - "pylint --version"
+  - "pylint --disable=superfluous-parens,redefined-builtin,useless-object-inheritance  bibliography.py"

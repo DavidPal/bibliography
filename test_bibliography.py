@@ -57,6 +57,12 @@ class TestBibliography(unittest.TestCase):
         self.assertEqual('December', bibliography.normalize_month('decem'))
         self.assertEqual('unknown month', bibliography.normalize_month('unknown month'))
 
+    def test_normalize_entry_type(self):
+        self.assertEqual('Book', bibliography.normalize_entry_type('book'))
+        self.assertEqual('Article', bibliography.normalize_entry_type('  artIclE '))
+        self.assertEqual('InProceedings', bibliography.normalize_entry_type('conference'))
+        self.assertEqual('unknown', bibliography.normalize_entry_type('  unknown'))
+
 
 if __name__ == '__main__':
     unittest.main()

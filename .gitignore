@@ -1,6 +1,7 @@
 # Python temporary file
 *.pyc
 __pycache__/
+.cache/
 
 # PyCharm files
 .idea/
