@@ -3,7 +3,7 @@
 """BibTeX bibliography beautifier.
 
 Author: David Pal <davidko.pal@gmail.com>
-Date: 2013-2019
+Date: 2013-2020
 
 Usage:
 
@@ -39,7 +39,7 @@ ENTRY_TYPES = {
 
 # Dictionary mapping entry type to their priority.
 # Entries not listed have priority zero.
-ENTRY_PRORITIES = {
+ENTRY_PRIORITIES = {
     'String': -99,
     'Proceedings': 99,
     'Book': 99,
@@ -253,8 +253,8 @@ class Entry(object):
 
     def priority(self):
         """Returns """
-        if self.entry_type in ENTRY_PRORITIES:
-            return ENTRY_PRORITIES[self.entry_type]
+        if self.entry_type in ENTRY_PRIORITIES:
+            return ENTRY_PRIORITIES[self.entry_type]
         return 0
 
 

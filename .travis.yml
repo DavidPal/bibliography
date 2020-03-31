@@ -13,6 +13,6 @@ install:
   - "pip install unittest2 nose coveralls pytest pylint"
 
 script:
-  - "py.test --verbose"
+  - "pytest --verbose"
   - "pylint --version"
   - "pylint --disable=superfluous-parens,redefined-builtin,useless-object-inheritance  bibliography.py"
