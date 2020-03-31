@@ -288,7 +288,7 @@ def read_file(file_name):
 def write_file(file_name, comments, entries):
     """Writes text into a file."""
     with open(file_name, 'w') as file:
-        if len(comments) > 0:
+        if comments:
             file.write('\n'.join(comments))
             file.write('\n')
         file.write('\n\n'.join(str(entry) for entry in entries))
