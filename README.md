@@ -14,5 +14,5 @@ It has the following features:
 Usage
 -----
 ```
-python bibliohgraphy.py input.bib > output.bib
+python bibliography.py file.bib
 ```

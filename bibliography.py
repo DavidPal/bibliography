@@ -7,16 +7,17 @@ Date: 2013-2020
 
 Usage:
 
-   bibliography.py input.bib
+   bibliography.py file.bib
 
-The script prints the formatted version on the console.
-To redirect into a file, use:
+The script formats the bibliographic file. The script overwrites the input file.
+If you do not want the input file to be overwritten, use --output option:
 
-   bibliography.py input.bib > output.bib
+   bibliography.py file.bib --output output.bib
+
 """
 
+import argparse
 import re
-import sys
 
 # Dictionary mapping lower-case type of bibliographic entry to its proper spelling.
 ENTRY_TYPES = {
@@ -270,33 +271,48 @@ def parse_entries(text):
     return entries
 
 
-def sort_entries(entries):
-    """Sorts a list of entries in the canonical order."""
-    entries.sort(key=lambda e: e.entry_name)
-    entries.sort(key=lambda e: e.entry_type)
-    entries.sort(key=lambda e: e.priority())
-    return entries
-
-
-def read_file():
+def read_file(file_name):
     """Reads content of a file."""
+    comments = []
     lines = []
-    with open(sys.argv[1], 'r') as file:
+    with open(file_name, 'r') as file:
         for line in file:
             if line.strip().startswith('%'):
-                print(line.strip())
+                comments.append(line.strip())
             else:
                 lines.append(line)
     text = '\n'.join(lines)
-    return text
+    return comments, text
+
+
+def write_file(file_name, comments, entries):
+    """Writes text into a file."""
+    with open(file_name, 'w') as file:
+        if len(comments) > 0:
+            file.write('\n'.join(comments))
+            file.write('\n')
+        file.write('\n\n'.join(str(entry) for entry in entries))
+        file.write('\n')
 
 
 def main():
-    """Reads the input bibfile and prints out its properly formatted version."""
-    text = read_file()
+    """Reads the input bibliography file and outputs its properly formatted version."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input', help='bibliographic file')
+    parser.add_argument('--output', help='output file')
+    parsed_arguments = parser.parse_args()
+
+    print('Reading file "{}" ...'.format(parsed_arguments.input))
+    comments, text = read_file(parsed_arguments.input)
+    print('Parsing entries...')
     entries = parse_entries(text)
-    entries = sort_entries(entries)
-    print("\n\n".join(str(entry) for entry in entries))
+    entries.sort(key=lambda entry: (entry.priority(), entry.entry_type, entry.entry_name))
+    if parsed_arguments.output:
+        output_file = parsed_arguments.output
+    else:
+        output_file = parsed_arguments.input
+    print('Writing file "{}" ...'.format(output_file))
+    write_file(output_file, comments, entries)
 
 
 if __name__ == '__main__':
