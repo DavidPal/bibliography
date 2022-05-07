@@ -276,7 +276,7 @@ def read_file(file_name: str) -> tuple[list[str], str]:
     """Reads content of a file."""
     comments = []
     lines = []
-    with open(file_name, "r") as file:
+    with open(file_name, "r", encoding="utf-8") as file:
         for line in file:
             if line.strip().startswith("%"):
                 comments.append(line.strip())
@@ -288,7 +288,7 @@ def read_file(file_name: str) -> tuple[list[str], str]:
 
 def write_file(file_name: str, comments: list[str], entries: list[Entry]) -> None:
     """Writes text into a file."""
-    with open(file_name, "w") as file:
+    with open(file_name, "w", encoding="utf-8") as file:
         if comments:
             file.write("\n".join(comments))
             file.write("\n")

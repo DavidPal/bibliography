@@ -18,10 +18,16 @@ jobs:
             python3 --version
 
       - run:
+          name: Install dependencies
+          command: pip install pylint pytest
+
+      - run:
           name: Check python code style
-          command: |
-            pip install pylint
-            make pylint
+          command: make pylint
+
+      - run:
+          name: Run unit tests
+          command: make test
 
 workflows:
   test_my_app:
