@@ -117,8 +117,8 @@ def normalize_author(text: str) -> str:
 
 def normalize_authors(text: str) -> str:
     """Puts a list of authors' names into canonical form."""
-    authors = text.split(' and ')
-    return ' and '.join([normalize_author(author) for author in authors])
+    authors = text.split(" and ")
+    return " and ".join([normalize_author(author) for author in authors])
 
 
 def normalize_pages(text: str) -> str:
@@ -299,11 +299,11 @@ def write_file(file_name: str, comments: list[str], entries: list[Entry]) -> Non
 def main():
     """Reads the input bibliography file and outputs its properly formatted version."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('input', help='bibliographic file')
-    parser.add_argument('--output', help='output file')
+    parser.add_argument("input", help="bibliographic file")
+    parser.add_argument("--output", help="output file")
     parsed_arguments = parser.parse_args()
 
-    print("Reading file '{}' ...".format(parsed_arguments.input))
+    print(f"Reading file '{parsed_arguments.input}' ...")
     comments, text = read_file(parsed_arguments.input)
     print("Parsing entries...")
     entries = parse_entries(text)
@@ -312,7 +312,7 @@ def main():
         output_file = parsed_arguments.output
     else:
         output_file = parsed_arguments.input
-    print("Writing file '{}' ...".format(output_file))
+    print(f"Writing file '{output_file}' ...")
     write_file(output_file, comments, entries)
 
 
