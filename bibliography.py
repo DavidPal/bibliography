@@ -3,7 +3,7 @@
 """BibTeX bibliography beautifier.
 
 Author: David Pal <davidko.pal@gmail.com>
-Date: 2013-2020
+Date: 2013-2022
 
 Usage:
 
@@ -176,8 +176,8 @@ class Entry:
     """
 
     def __init__(self):
-        self.entry_type = 'UNKNOWN'
-        self.entry_name = ''
+        self.entry_type = "UNKNOWN"
+        self.entry_name = ""
         self.fields = {}
 
     def parse_from_string(self, text: str) -> Optional[str]:
@@ -205,7 +205,7 @@ class Entry:
         if not match:
             return None
         key = match.group(1)
-        if self.entry_type != 'String':
+        if self.entry_type != "String":
             key = capitalize(key)
         text = text[match.end():]
 
@@ -214,7 +214,7 @@ class Entry:
             value, rest = find_matching_closing_brace(text)
             value = remove_braces(value)
         elif text[0] == "\"":
-            match = re.match('^"([^\"]+)"\\s*,?\\s*', text)
+            match = re.match("^\"([^\"]+)\"\\s*,?\\s*", text)
             value = match.group(1)
             rest = text[match.end():]
         else:
@@ -254,7 +254,7 @@ class Entry:
         return output + "}"
 
     def priority(self):
-        """Returns """
+        """Returns the sort priority of the entry."""
         if self.entry_type in ENTRY_PRIORITIES:
             return ENTRY_PRIORITIES[self.entry_type]
         return 0
@@ -273,7 +273,7 @@ def parse_entries(text: str) -> list[Entry]:
 
 
 def read_file(file_name: str) -> tuple[list[str], str]:
-    """Reads content of a file."""
+    """Reads content of a bibliography file."""
     comments = []
     lines = []
     with open(file_name, "r", encoding="utf-8") as file:

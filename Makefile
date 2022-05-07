@@ -2,7 +2,7 @@ isort:
 	isort --check-only --show-files --diff *.py
 
 pylint:
-	pylint *.py
+	pylint --rcfile=pylintrc *.py
 
 test:
 	pytest --verbose

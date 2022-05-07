@@ -19,7 +19,7 @@ jobs:
 
       - run:
           name: Install dependencies
-          command: pip install isort black pylint pytest
+          command: pip install isort pylint pylint-quotes pytest
 
       - run:
           name: Check import order
