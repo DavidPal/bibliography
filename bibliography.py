@@ -18,61 +18,62 @@ If you do not want the input file to be overwritten, use --output option:
 
 import argparse
 import re
+from typing import Optional
 
 # Dictionary mapping lower-case type of bibliographic entry to its proper spelling.
 ENTRY_TYPES = {
-    'article':       'Article',
-    'book':          'Book',
-    'booklet':       'Booklet',
-    'conference':    'InProceedings',  # 'Conference' is the same as 'InProceedings'
-    'inbook':        'InBook',
-    'incollection':  'InCollection',
-    'inproceedings': 'InProceedings',
-    'manual':        'Manual',
-    'mastersthesis': 'MastersThesis',
-    'misc':          'Misc',
-    'phdthesis':     'PhDThesis',
-    'proceedings':   'Proceedings',
-    'techreport':    'TechReport',
-    'unpublished':   'Unpublished',
-    'string':        'String',
+    "article":       "Article",
+    "book":          "Book",
+    "booklet":       "Booklet",
+    "conference":    "InProceedings",  # "Conference" is the same as "InProceedings"
+    "inbook":        "InBook",
+    "incollection":  "InCollection",
+    "inproceedings": "InProceedings",
+    "manual":        "Manual",
+    "mastersthesis": "MastersThesis",
+    "misc":          "Misc",
+    "phdthesis":     "PhDThesis",
+    "proceedings":   "Proceedings",
+    "techreport":    "TechReport",
+    "unpublished":   "Unpublished",
+    "string":        "String",
 }
 
 # Dictionary mapping entry type to their priority.
 # Entries not listed have priority zero.
 ENTRY_PRIORITIES = {
-    'String': -99,
-    'Proceedings': 99,
-    'Book': 99,
+    "String": -99,
+    "Proceedings": 99,
+    "Book": 99,
 }
 
 # Dictionary mapping a lower-case 3 letter prefix of a calendar month
 # to its proper spelling.
 MONTHS = {
-    'jan': 'January',
-    'feb': 'Februry',
-    'mar': 'March',
-    'apr': 'April',
-    'may': 'May',
-    'jun': 'June',
-    'jul': 'July',
-    'aug': 'August',
-    'sep': 'September',
-    'oct': 'October',
-    'nov': 'November',
-    'dec': 'December',
+    "jan": "January",
+    "feb": "Februry",
+    "mar": "March",
+    "apr": "April",
+    "may": "May",
+    "jun": "June",
+    "jul": "July",
+    "aug": "August",
+    "sep": "September",
+    "oct": "October",
+    "nov": "November",
+    "dec": "December",
 }
 
 
 def format_text(text):
     """Removes unnecessary white space between words."""
-    return ' '.join(text.split())
+    return " ".join(text.split())
 
 
 def capitalize(text):
     """Capitalizes initial letters in words in a string."""
     word_start = True
-    output = ''
+    output = ""
     for char in text.lower():
         if word_start:
             char = char.upper()
@@ -81,14 +82,14 @@ def capitalize(text):
     return output
 
 
-def find_matching_closing_brace(text):
+def find_matching_closing_brace(text: str) -> tuple[str, str]:
     """Finds closing brace in a string that matches '{' + string."""
     nesting = 1
     end = 0
     for i in range(1, len(text)):
-        if text[i] == '{':
+        if text[i] == "{":
             nesting = nesting + 1
-        elif text[i] == '}':
+        elif text[i] == "}":
             nesting = nesting - 1
         end = i
         if nesting == 0:
@@ -97,41 +98,41 @@ def find_matching_closing_brace(text):
     return text[:end], text[end:]
 
 
-def remove_braces(text):
+def remove_braces(text: str) -> str:
     """Removes opening brace from the beginning and closing brace from the end of a string."""
-    if text[0] == '{':
+    if text[0] == "{":
         text = text[1:]
-    if text[-1] == '}':
+    if text[-1] == "}":
         text = text[:-1]
     return text
 
 
-def normalize_author(text):
+def normalize_author(text: str) -> str:
     """Puts an authors name into canonical form."""
-    parts = text.split(',', 1)
+    parts = text.split(",", 1)
     if len(parts) >= 2:
-        return format_text(parts[1]) + ' ' + format_text(parts[0].strip())
+        return format_text(parts[1]) + " " + format_text(parts[0].strip())
     return format_text(parts[0])
 
 
-def normalize_authors(text):
+def normalize_authors(text: str) -> str:
     """Puts a list of authors' names into canonical form."""
     authors = text.split(' and ')
     return ' and '.join([normalize_author(author) for author in authors])
 
 
-def normalize_pages(text):
+def normalize_pages(text: str) -> str:
     """Puts the pages field into the canonical form."""
-    parts = text.split('--', 1)
-    if '--' not in text:
-        parts = text.split('-', 1)
+    parts = text.split("--", 1)
+    if "--" not in text:
+        parts = text.split("-", 1)
     normalized = parts[0].strip()
     if len(parts) >= 2:
-        normalized = parts[0].strip() + '--' + parts[1].strip()
+        normalized = parts[0].strip() + "--" + parts[1].strip()
     return normalized
 
 
-def safe_parse_int(text):
+def safe_parse_int(text: str) -> Optional[int]:
     """Converts string to an integer or returns None if that is not possible."""
     try:
         return int(text)
@@ -139,7 +140,7 @@ def safe_parse_int(text):
         return None
 
 
-def normalize_year(text):
+def normalize_year(text: str) -> str:
     """Puts year into canonical form."""
     year = safe_parse_int(text)
     if not year:
@@ -149,7 +150,7 @@ def normalize_year(text):
     return str(year)
 
 
-def normalize_month(text):
+def normalize_month(text: str) -> str:
     """Puts name of a month into canonical form."""
     prefix = text[:3].lower()
     if prefix in MONTHS:
@@ -157,15 +158,15 @@ def normalize_month(text):
     return text
 
 
-def normalize_entry_type(entry_type):
-    """Puts the type of an entry into canonical form."""
+def normalize_entry_type(entry_type: str) -> str:
+    """Puts the type of entry into canonical form."""
     entry_type = entry_type.strip().lower()
     if entry_type not in ENTRY_TYPES:
         return entry_type
     return ENTRY_TYPES[entry_type]
 
 
-class Entry(object):
+class Entry:
     """Entry represents a bibliographic entry.
 
     Attributes:
@@ -179,9 +180,9 @@ class Entry(object):
         self.entry_name = ''
         self.fields = {}
 
-    def parse_from_string(self, text):
+    def parse_from_string(self, text: str) -> Optional[str]:
         """Parses the entry from a string that appears first in the string."""
-        match = re.match('\\s*@\\s*(\\w+)\\s*({)\\s*', text)
+        match = re.match("\\s*@\\s*(\\w+)\\s*({)\\s*", text)
         if not match:
             return None
         self.entry_type = match.group(1)
@@ -189,7 +190,7 @@ class Entry(object):
         text = text[match.end(2):]
         text, rest = find_matching_closing_brace(text)
 
-        match = re.match('\\s*([^\\s]+)\\s*,\\s*', text)
+        match = re.match("\\s*([^\\s]+)\\s*,\\s*", text)
         if match:
             self.entry_name = match.group(1)
             text = text[match.end():]
@@ -198,9 +199,9 @@ class Entry(object):
             text = self.parse_field(text)
         return rest
 
-    def parse_field(self, text):
+    def parse_field(self, text: str) -> Optional[str]:
         """Parses the field of an entry from a string that appears first in the string."""
-        match = re.match('\\s*,?\\s*([\\w-]+)\\s*=\\s*', text)
+        match = re.match("\\s*,?\\s*([\\w-]+)\\s*=\\s*", text)
         if not match:
             return None
         key = match.group(1)
@@ -208,16 +209,16 @@ class Entry(object):
             key = capitalize(key)
         text = text[match.end():]
 
-        value = ''
-        if text[0] == '{':
+        value = ""
+        if text[0] == "{":
             value, rest = find_matching_closing_brace(text)
             value = remove_braces(value)
-        elif text[0] == '\"':
+        elif text[0] == "\"":
             match = re.match('^"([^\"]+)"\\s*,?\\s*', text)
             value = match.group(1)
             rest = text[match.end():]
         else:
-            match = re.match('\\s*(\\w+)\\s*,?\\s*', text)
+            match = re.match("\\s*(\\w+)\\s*,?\\s*", text)
             value = match.group(1)
             rest = text[match.end():]
 
@@ -225,32 +226,32 @@ class Entry(object):
         return rest
 
     def __str__(self):
-        output = '@' + self.entry_type + '{'
+        output = "@" + self.entry_type + "{"
         if self.entry_name:
-            output += self.entry_name + ','
-        output += '\n'
+            output += self.entry_name + ","
+        output += "\n"
         keys = sorted(self.fields.keys())
         for key in keys:
-            output += + 4 * ' '
+            output += + 4 * " "
             output += key
-            output += max(0, 13 - len(key)) * ' '
-            output += ' = '
+            output += max(0, 13 - len(key)) * " "
+            output += " = "
             value = self.fields[key]
-            if self.entry_type != 'String':
-                if key in ['Author', 'Editor']:
+            if self.entry_type != "String":
+                if key in ["Author", "Editor"]:
                     value = normalize_authors(value)
-                if key == 'Pages':
+                if key == "Pages":
                     value = normalize_pages(value)
-                if key == 'Year':
+                if key == "Year":
                     value = normalize_year(value)
-                if key == 'Month':
+                if key == "Month":
                     value = normalize_month(value)
 
-            output += '{' + format_text(value) + '}'
-            if self.entry_type != 'String':
-                output += ','
-            output += '\n'
-        return output + '}'
+            output += "{" + format_text(value) + "}"
+            if self.entry_type != "String":
+                output += ","
+            output += "\n"
+        return output + "}"
 
     def priority(self):
         """Returns """
@@ -259,7 +260,7 @@ class Entry(object):
         return 0
 
 
-def parse_entries(text):
+def parse_entries(text: str) -> list[Entry]:
     """Parses a list of bibliographic entries from a string."""
     entries = []
     while True:
@@ -271,28 +272,28 @@ def parse_entries(text):
     return entries
 
 
-def read_file(file_name):
+def read_file(file_name: str) -> tuple[list[str], str]:
     """Reads content of a file."""
     comments = []
     lines = []
-    with open(file_name, 'r') as file:
+    with open(file_name, "r") as file:
         for line in file:
-            if line.strip().startswith('%'):
+            if line.strip().startswith("%"):
                 comments.append(line.strip())
             else:
                 lines.append(line)
-    text = '\n'.join(lines)
+    text = "\n".join(lines)
     return comments, text
 
 
-def write_file(file_name, comments, entries):
+def write_file(file_name: str, comments: list[str], entries: list[Entry]) -> None:
     """Writes text into a file."""
-    with open(file_name, 'w') as file:
+    with open(file_name, "w") as file:
         if comments:
-            file.write('\n'.join(comments))
-            file.write('\n')
-        file.write('\n\n'.join(str(entry) for entry in entries))
-        file.write('\n')
+            file.write("\n".join(comments))
+            file.write("\n")
+        file.write("\n\n".join(str(entry) for entry in entries))
+        file.write("\n")
 
 
 def main():
@@ -302,18 +303,18 @@ def main():
     parser.add_argument('--output', help='output file')
     parsed_arguments = parser.parse_args()
 
-    print('Reading file "{}" ...'.format(parsed_arguments.input))
+    print("Reading file '{}' ...".format(parsed_arguments.input))
     comments, text = read_file(parsed_arguments.input)
-    print('Parsing entries...')
+    print("Parsing entries...")
     entries = parse_entries(text)
     entries.sort(key=lambda entry: (entry.priority(), entry.entry_type, entry.entry_name))
     if parsed_arguments.output:
         output_file = parsed_arguments.output
     else:
         output_file = parsed_arguments.input
-    print('Writing file "{}" ...'.format(output_file))
+    print("Writing file '{}' ...".format(output_file))
     write_file(output_file, comments, entries)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
