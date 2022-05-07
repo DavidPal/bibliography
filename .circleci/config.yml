@@ -22,3 +22,8 @@ jobs:
           command: |
             pip install pylint
             make pylint
+
+workflows:
+  test_my_app:
+    jobs:
+      - build_and_test
