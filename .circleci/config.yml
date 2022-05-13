@@ -19,14 +19,21 @@ jobs:
 
       - run:
           name: Install dependencies
-          command: pip install isort pylint pylint-quotes pytest
+          command: |
+            pip install poetry==1.1.13
+            poetry config virtualenvs.create false
+            poetry install
 
       - run:
           name: Check import order
           command: make isort
 
       - run:
-          name: Check python code style
+          name: Check python code style with flake8
+          command: make flake8
+
+      - run:
+          name: Check python code style with pylint
           command: make pylint
 
       - run:

@@ -11,6 +11,7 @@ python = "^3.10"
 pytest = "^7.1.2"
 pylint = "^2.13.9"
 pylint-quotes = "^0.2.3"
+flake8 = "^4.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
