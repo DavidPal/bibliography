@@ -12,3 +12,6 @@ __pycache__/
 
 # Pyenv files
 .python-version
+
+# Mypy files
+.mypy_cache/

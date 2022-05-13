@@ -1,6 +1,11 @@
-.PHONY: pylint flake8 isort mypy test clean install-python create-environment delete-environment
+.PHONY: clean install-python create-environment delete-environment isort pylint flake8 mypy test
 
 PYTHON_ENVIRONMENT="bibliography"
+
+clean:
+	find . -name "__pycache__" -prune -exec rm -rf {} \;
+	find . -name ".pytest_cache" -prune -exec rm -rf {} \;
+	find . -name ".mypy_cache" -prune -exec rm -rf {} \;
 
 install-python:
 	pyenv install 3.10.4
@@ -16,7 +21,7 @@ isort:
 	isort --check-only --show-files --diff *.py
 
 pylint:
-	pylint --rcfile=pylintrc *.py
+	pylint --rcfile=pylintrc --verbose *.py
 
 flake8:
 	flake8 *.py
