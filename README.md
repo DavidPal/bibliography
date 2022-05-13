@@ -1,6 +1,6 @@
 # bibliography
 
-[![Build Status](https://travis-ci.org/DavidPal/bibliography.svg?branch=master)](https://travis-ci.org/DavidPal/bibliography)
+[![CircleCI](https://circleci.com/gh/DavidPal/bibliography/tree/master.svg?style=svg)](https://circleci.com/gh/DavidPal/bibliography/tree/master)
 
 Beautifier of BibTeX files.
 
