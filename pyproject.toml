@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "bibliography"
+version = "0.1.0"
+description = "Beautifier of BibTeX files"
+authors = ["David Pal <davidko.pal@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+pylint = "^2.13.9"
+pylint-quotes = "^0.2.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -11,8 +11,13 @@ It has the following features:
 * use braces for field values
 * normalize values of author, editor, pages, year, month fields
 
-Usage
------
+## Usage
 ```
 python bibliography.py file.bib
 ```
+
+## Developer tools
+
+* Python 3.10
+* Pyenv
+* Poetry

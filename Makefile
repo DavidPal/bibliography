@@ -18,5 +18,11 @@ isort:
 pylint:
 	pylint --rcfile=pylintrc *.py
 
+flake8:
+	flake8 *.py
+
+mypy:
+	mypy *.py
+
 test:
 	pytest --verbose
