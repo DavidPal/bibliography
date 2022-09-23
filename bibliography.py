@@ -22,21 +22,21 @@ from typing import Optional
 
 # Dictionary mapping lower-case type of bibliographic entry to its proper spelling.
 ENTRY_TYPES = {
-    "article":       "Article",
-    "book":          "Book",
-    "booklet":       "Booklet",
-    "conference":    "InProceedings",  # "Conference" is the same as "InProceedings"
-    "inbook":        "InBook",
-    "incollection":  "InCollection",
+    "article": "Article",
+    "book": "Book",
+    "booklet": "Booklet",
+    "conference": "InProceedings",  # "Conference" is the same as "InProceedings"
+    "inbook": "InBook",
+    "incollection": "InCollection",
     "inproceedings": "InProceedings",
-    "manual":        "Manual",
+    "manual": "Manual",
     "mastersthesis": "MastersThesis",
-    "misc":          "Misc",
-    "phdthesis":     "PhDThesis",
-    "proceedings":   "Proceedings",
-    "techreport":    "TechReport",
-    "unpublished":   "Unpublished",
-    "string":        "String",
+    "misc": "Misc",
+    "phdthesis": "PhDThesis",
+    "proceedings": "Proceedings",
+    "techreport": "TechReport",
+    "unpublished": "Unpublished",
+    "string": "String",
 }
 
 # Dictionary mapping entry type to their priority.
@@ -187,13 +187,13 @@ class Entry:
             return None
         self.entry_type = match.group(1)
         self.entry_type = normalize_entry_type(self.entry_type)
-        text = text[match.end(2):]
+        text = text[match.end(2) :]
         text, rest = find_matching_closing_brace(text)
 
         match = re.match("\\s*([^\\s]+)\\s*,\\s*", text)
         if match:
             self.entry_name = match.group(1)
-            text = text[match.end():]
+            text = text[match.end() :]
 
         while text:
             text = self.parse_field(text)
@@ -207,7 +207,7 @@ class Entry:
         key = match.group(1)
         if self.entry_type != "String":
             key = capitalize(key)
-        text = text[match.end():]
+        text = text[match.end() :]
 
         value = ""
         if text[0] == "{":
@@ -216,11 +216,11 @@ class Entry:
         elif text[0] == "\"":
             match = re.match("^\"([^\"]+)\"\\s*,?\\s*", text)
             value = match.group(1)
-            rest = text[match.end():]
+            rest = text[match.end() :]
         else:
             match = re.match("\\s*(\\w+)\\s*,?\\s*", text)
             value = match.group(1)
-            rest = text[match.end():]
+            rest = text[match.end() :]
 
         self.fields[key] = value.strip()
         return rest
@@ -232,7 +232,7 @@ class Entry:
         output += "\n"
         keys = sorted(self.fields.keys())
         for key in keys:
-            output += + 4 * " "
+            output += +4 * " "
             output += key
             output += max(0, 13 - len(key)) * " "
             output += " = "

@@ -40,8 +40,10 @@ class TestBibliography(unittest.TestCase):
         self.assertEqual("David Pal", bibliography.normalize_author("  David   Pal  "))
         self.assertEqual("David Pal", bibliography.normalize_author("Pal, David"))
         self.assertEqual("Paul R. Halmos", bibliography.normalize_author(" Halmos ,  Paul   R. "))
-        self.assertEqual("David Pal and Francesco Orabona",
-                         bibliography.normalize_authors("Pal, David and Francesco Orabona"))
+        self.assertEqual(
+            "David Pal and Francesco Orabona",
+            bibliography.normalize_authors("Pal, David and Francesco Orabona"),
+        )
 
     def test_normalize_pages(self):
         """Tests normalize_pages() function."""
