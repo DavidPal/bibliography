@@ -1,6 +1,5 @@
 [run]
 branch = True
-source = search_ads_ranking
 
 [xml]
 output = pytest_results/coverage.xml
