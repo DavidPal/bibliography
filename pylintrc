@@ -49,7 +49,7 @@ limit-inference-results=100
 load-plugins=pylint_quotes
 
 # Pickle collected data for later comparisons.
-persistent=yes
+persistent=no
 
 # Minimum Python version to use for version dependent checks. Will default to
 # the version used to run pylint.
