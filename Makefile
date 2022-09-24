@@ -1,10 +1,11 @@
-.PHONY: clean install-python create-environment delete-environment black-check black-format isort-check isort-format pylint flake8 mypy test
+.PHONY: clean install-python create-environment delete-environment black-check black-format isort-check isort-format pylint flake8 mypy test coverage
 
 PYTHON_ENVIRONMENT="bibliography"
-PYTHON_VERSION="3.10.6"
+PYTHON_VERSION="3.10.7"
 SOURCE_FILES=*.py
 
 clean:
+	# Delete temporary files.
 	rm -rf pytest_results/ .coverage coverage.xml .pytest_cache/  .mypy_cache/
 	find . -name "__pycache__" -prune -exec rm -rf {} \;
 
@@ -23,23 +24,23 @@ delete-environment:
 
 black-check:
 	# Check code formatting.
-	black --diff --check --color --skip-string-normalization --line-length 100 --exclude "_pb2.py|_rpc.py|_twirp.py|config__" $(SOURCE_FILES)
+	black --diff --check --color --skip-string-normalization --line-length 100 $(SOURCE_FILES)
 
 black-format:
 	# Reformat code.
-	black --skip-string-normalization --line-length 100 --exclude "_pb2.py|_rpc.py|_twirp.py|config__" $(SOURCE_FILES)
+	black --skip-string-normalization --line-length 100 $(SOURCE_FILES)
 
 isort-check:
 	# Check order of Python imports.
-	isort --check-only --diff --force-single-line-imports --line-length=100 --skip-glob="*_pb2.py" --skip-glob="*_rpc.py" --skip-glob="*_twirp.py" $(SOURCE_FILES)
+	isort --check-only --diff --force-single-line-imports --line-length=100 $(SOURCE_FILES)
 
 isort-format:
 	# Sort Python imports.
-	isort --force-single-line-imports --line-length=100 --skip-glob="*_pb2.py" --skip-glob="*_rpc.py" --skip-glob="*_twirp.py" $(SOURCE_FILES)
+	isort --force-single-line-imports --line-length=100 $(SOURCE_FILES)
 
 pylint:
 	# Static code analysis.
-	pylint --rcfile=pylintrc --verbose *.py
+	pylint --output-format=colorized --rcfile=pylintrc --verbose  $(SOURCE_FILES)
 
 flake8:
 	# Check PEP8 code style.
