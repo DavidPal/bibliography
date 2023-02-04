@@ -23,7 +23,7 @@ jobs:
             pip install --upgrade pip
             pip install poetry==1.3.2
             # poetry config virtualenvs.create false
-            poetry install
+            poetry install --verbose
 
       - run:
           name: Check code formatting
