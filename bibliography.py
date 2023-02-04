@@ -3,7 +3,7 @@
 """BibTeX bibliography beautifier.
 
 Author: David Pal <davidko.pal@gmail.com>
-Date: 2013-2022
+Date: 2013-2023
 
 Usage:
 
@@ -196,7 +196,7 @@ class Entry:
             text = text[match.end() :]
 
         while text:
-            text = self.parse_field(text)
+            text = self.parse_field(text)  # type: ignore[assignment]
         return rest
 
     def parse_field(self, text: str) -> Optional[str]:
@@ -215,12 +215,12 @@ class Entry:
             value = remove_braces(value)
         elif text[0] == "\"":
             match = re.match("^\"([^\"]+)\"\\s*,?\\s*", text)
-            value = match.group(1)
-            rest = text[match.end() :]
+            value = match.group(1)  # type: ignore[union-attr]
+            rest = text[match.end() :]  # type: ignore[union-attr]
         else:
             match = re.match("\\s*(\\w+)\\s*,?\\s*", text)
-            value = match.group(1)
-            rest = text[match.end() :]
+            value = match.group(1)  # type: ignore[union-attr]
+            rest = text[match.end() :]  # type: ignore[union-attr]
 
         self.fields[key] = value.strip()
         return rest
@@ -265,7 +265,7 @@ def parse_entries(text: str) -> list[Entry]:
     entries = []
     while True:
         entry = Entry()
-        text = entry.parse_from_string(text)
+        text = entry.parse_from_string(text)  # type: ignore[assignment]
         if not text:
             break
         entries.append(entry)
