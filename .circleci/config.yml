@@ -26,7 +26,7 @@ jobs:
           name: Install dependencies
           command: |
             poetry config virtualenvs.create false
-            poetry install -vvv --no-ansi
+            poetry install --verbose --no-ansi
 
       - run:
           name: Check code formatting
