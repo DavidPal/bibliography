@@ -46,7 +46,7 @@ limit-inference-results=100
 
 # List of plugins (as comma separated values of python module names) to load,
 # usually to register additional checkers.
-load-plugins=pylint_quotes
+load-plugins=pylint_quotes,pylint.extensions.docstyle,pylint.extensions.docparams,pylint.extensions.no_self_use
 
 # Pickle collected data for later comparisons.
 persistent=no
@@ -593,5 +593,5 @@ preferred-modules=
 
 # Exceptions that will emit a warning when being caught. Defaults to
 # "BaseException, Exception".
-overgeneral-exceptions=BaseException,
-                       Exception
+overgeneral-exceptions=builtins.BaseException,
+                       builtins.Exception

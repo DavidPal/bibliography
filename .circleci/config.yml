@@ -18,11 +18,15 @@ jobs:
             python3 --version
 
       - run:
+          name: Install poetry
+          command: |
+            pip --verbose install poetry==1.3.2
+
+      - run:
           name: Install dependencies
           command: |
-            pip install poetry==1.2.1
             poetry config virtualenvs.create false
-            poetry install
+            poetry install --verbose --no-ansi
 
       - run:
           name: Check code formatting

@@ -1,54 +1,36 @@
-.PHONY: clean install-python create-environment delete-environment black-check black-format isort-check isort-format pylint flake8 mypy test coverage
+.PHONY: black-check black-format pylint flake8 isort-check isort-format mypy test coverage clean install-python create-environment delete-environment install-dependencies build-package
 
-PYTHON_ENVIRONMENT="bibliography"
-PYTHON_VERSION="3.10.7"
-SOURCE_FILES=*.py
-
-clean:
-	# Delete temporary files.
-	rm -rf pytest_results/ .coverage coverage.xml .pytest_cache/  .mypy_cache/
-	find . -name "__pycache__" -prune -exec rm -rf {} \;
-
-install-python:
-	# Install the correct version of python.
-	pyenv install $(PYTHON_VERSION)
-
-create-environment:
-	# Create Python virtual environment.
-	pyenv virtualenv $(PYTHON_VERSION) $(PYTHON_ENVIRONMENT)
-	pyenv local $(PYTHON_ENVIRONMENT)
-
-delete-environment:
-	# Delete Python virtual environment.
-	pyenv virtualenv-delete $(PYTHON_ENVIRONMENT)
+PYTHON_ENVIRONMENT = "bibliography"
+PYTHON_VERSION = "3.10.7"
+SOURCE_FILES = *.py
 
 black-check:
 	# Check code formatting.
-	black --diff --check --color --skip-string-normalization --line-length 100 $(SOURCE_FILES)
+	black --diff --check --color --exclude "_pb2.py|_rpc.py|_twirp.py" $(SOURCE_FILES)
 
 black-format:
 	# Reformat code.
-	black --skip-string-normalization --line-length 100 $(SOURCE_FILES)
-
-isort-check:
-	# Check order of Python imports.
-	isort --check-only --diff --force-single-line-imports --line-length=100 $(SOURCE_FILES)
-
-isort-format:
-	# Sort Python imports.
-	isort --force-single-line-imports --line-length=100 $(SOURCE_FILES)
+	black --exclude "_pb2.py|_rpc.py|_twirp.py" $(SOURCE_FILES)
 
 pylint:
 	# Static code analysis.
-	pylint --output-format=colorized --rcfile=pylintrc --verbose  $(SOURCE_FILES)
+	pylint --output-format=colorized --ignore-patterns="_pb2.py,_rpc.py,_twirp.py" --rcfile=pylintrc $(SOURCE_FILES)
 
 flake8:
 	# Check PEP8 code style.
-	flake8 $(SOURCE_FILES)
+	flake8 --color=always --exclude="*_pb2.py,*_rpc.py,*_twirp.py" $(SOURCE_FILES)
+
+isort-check:
+	# Check imports.
+	isort --check-only --diff --color --skip-glob="*_pb2.py" --skip-glob="*_rpc.py" --skip-glob="*_twirp.py" $(SOURCE_FILES)
+
+isort-format:
+	# Format imports.
+	isort --color --skip-glob="*_pb2.py" --skip-glob="*_rpc.py" --skip-glob="*_twirp.py" $(SOURCE_FILES)
 
 mypy:
 	# Check type hints.
-	mypy $(SOURCE_FILES)
+	mypy --config-file "mypy.ini" --exclude ".*_pb2.py$$|.*_rpc.py$$|.*_twirp.py$$" $(SOURCE_FILES)
 
 test:
 	# Run unit tests.
@@ -56,7 +38,35 @@ test:
 
 coverage:
 	# Compute unit test code coverage.
-	coverage run --module pytest --verbose --color=yes --junit-xml=pytest_results/pytest.xml  ./
+	coverage run -m pytest --verbose --junit-xml=pytest_results/pytest.xml  ./
 	coverage report --show-missing
 	coverage xml
-	coverage lcov -o pytest_results/coverage.lcov
+
+clean:
+	# Remove temporary files.
+	rm -rf logs/*.log  pytest_results/  .coverage *.egg-info/  dist/
+	find . -name "__pycache__" -prune -exec rm -rf {} \;
+	find . -name ".pytest_cache" -prune -exec rm -rf {} \;
+	find . -name ".mypy_cache" -prune -exec rm -rf {} \;
+
+install-python:
+	# Install the correct version of python.
+	pyenv install $(PYTHON_VERSION)
+
+create-environment:
+	# Create virtual environment.
+	pyenv virtualenv $(PYTHON_VERSION) $(PYTHON_ENVIRONMENT)
+	pyenv local $(PYTHON_ENVIRONMENT)
+	pip install --upgrade pip
+
+delete-environment:
+	# Delete virtual environment.
+	pyenv virtualenv-delete $(PYTHON_ENVIRONMENT)
+
+install-dependencies:
+	# Install all dependencies.
+	poetry install --verbose
+
+build-package:
+	# Build a wheel package.
+	poetry build
