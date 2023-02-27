@@ -33,6 +33,10 @@ jobs:
           command: make black-check
 
       - run:
+          name: Check docstrings
+          command: make pydocstyle
+
+      - run:
           name: Check import order
           command: make isort-check
 

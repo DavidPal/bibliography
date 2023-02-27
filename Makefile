@@ -1,8 +1,24 @@
-.PHONY: black-check black-format pylint flake8 isort-check isort-format mypy test coverage clean install-python create-environment delete-environment install-dependencies build-package
+.PHONY: whitespace-format-check whitespace-format black-check pydocstyle black-format pylint flake8 isort-check isort-format mypy test coverage clean install-python create-environment delete-environment install-dependencies build-package
 
 PYTHON_ENVIRONMENT = "bibliography"
 PYTHON_VERSION = "3.10.7"
 SOURCE_FILES = *.py
+
+whitespace-format-check:
+	# Check whitespace formatting.
+	whitespace-format --check-only --color --new-line-marker linux \
+			--add-new-line-marker-at-end-of-file --remove-trailing-whitespace \
+			--remove-trailing-empty-lines \
+			--normalize-non-standard-whitespace replace \
+			--exclude ".pyc"  *
+
+whitespace-format:
+	# Reformat code.
+	whitespace-format --color --new-line-marker linux \
+			--add-new-line-marker-at-end-of-file --remove-trailing-whitespace \
+			--remove-trailing-empty-lines \
+			--normalize-non-standard-whitespace replace \
+			--exclude ".pyc"  *
 
 black-check:
 	# Check code formatting.
@@ -11,6 +27,10 @@ black-check:
 black-format:
 	# Reformat code.
 	black --exclude "_pb2.py|_rpc.py|_twirp.py" $(SOURCE_FILES)
+
+pydocstyle:
+	# Check docstrings
+	python -m pydocstyle --verbose --explain --source --count $(SOURCE_FILES)
 
 pylint:
 	# Static code analysis.

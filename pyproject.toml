@@ -9,12 +9,14 @@ python = "^3.10"
 
 [tool.poetry.dev-dependencies]
 black = "^23.1.0"
-coverage = "^7.1.0"
+coverage = "^7.2.1"
 flake8 = "^6.0.0"
+flake8-absolute-import = "^1.0.0.1"
 isort = {extras = ["colors"], version = "^5.12.0"}
-mypy = "^0.991"
+mypy = "^1.0.1"
+pydocstyle = {extras = ["toml"], version = "^6.3.0"}
 pytest = "^7.2.1"
-pylint = "^2.16.1"
+pylint = "^2.16.2"
 pylint-quotes = "^0.2.3"
 
 [build-system]
@@ -24,3 +26,15 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 100
 skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+force_single_line = true
+line_length = 100
+multi_line_output = 3
+
+[tool.pydocstyle]
+# List of rules (error codes) that should be enforced by pydocstyle.
+# Complete list of codes can be found at: http://www.pydocstyle.org/en/stable/error_codes.html
+# Keep the list below in lexicograhic order!
+select = "D101,D102,D103,D105,D200,D201,D204,D205,D206,D207,D208,D209,D210,D211,D212,D300,D400,D403,D405,D411,D416,D419"

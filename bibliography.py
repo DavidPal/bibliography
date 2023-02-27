@@ -226,6 +226,7 @@ class Entry:
         return rest
 
     def __str__(self):
+        """Returns the BibTeX representation of the entry."""
         output = "@" + self.entry_type + "{"
         if self.entry_name:
             output += self.entry_name + ","
