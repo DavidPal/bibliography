@@ -29,6 +29,10 @@ jobs:
             poetry install --verbose --no-ansi
 
       - run:
+          name: Check whitespace formatting
+          command: make whitespace-format-check
+
+      - run:
           name: Check code formatting
           command: make black-check
 
