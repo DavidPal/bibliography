@@ -30,7 +30,9 @@ jobs:
 
       - run:
           name: Check whitespace formatting
-          command: make whitespace-format-check
+          command: |
+            whitespace-format --help
+            make whitespace-format-check
 
       - run:
           name: Check code formatting
