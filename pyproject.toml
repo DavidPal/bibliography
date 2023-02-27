@@ -5,7 +5,7 @@ description = "Beautifier of BibTeX files"
 authors = ["David Pal <davidko.pal@gmail.com>"]
 
 [tool.poetry.scripts]
-whitespace-format = "bibliography:main"
+bibliography = "bibliography:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
