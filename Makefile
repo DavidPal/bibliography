@@ -10,7 +10,7 @@ whitespace-format-check:
 			--add-new-line-marker-at-end-of-file --remove-trailing-whitespace \
 			--remove-trailing-empty-lines \
 			--normalize-non-standard-whitespace replace \
-			--exclude ".pyc"  *
+			--exclude ".pyc$$"  *
 
 whitespace-format:
 	# Reformat code.
@@ -18,7 +18,7 @@ whitespace-format:
 			--add-new-line-marker-at-end-of-file --remove-trailing-whitespace \
 			--remove-trailing-empty-lines \
 			--normalize-non-standard-whitespace replace \
-			--exclude ".pyc"  *
+			--exclude ".pyc$$"  *
 
 black-check:
 	# Check code formatting.
