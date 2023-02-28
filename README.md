@@ -55,16 +55,16 @@ command `make delete-environment`.
 
 If you make code change, run unit tests and code checks with the command:
 ```shell
-make clean isort-check black-check flake8 pylint mypy test coverage
+make clean whitespace-format-check isort-check black-check flake8 pydocstyle pylint mypy test coverage
 ```
 
 Each make target runs different checks:
 - `clean` deletes temporary files
+- `whitespace-format-check` runs [whitespace-format](https://github.com/DavidPal/whitespace-format) checker on all files
 - `isort-check` runs [isort](https://pycqa.github.io/isort/) checker of imports in `*.py` files
 - `black-check` runs [black](https://github.com/psf/black/) code format checker on `*.py` files
-- `pydocstyle` runs [pydocstyle](http://www.pydocstyle.org/) docstring checker on `*.py` files
-- `whitespace-format-check` runs [whitespace-format](https://github.com/DavidPal/whitespace-format) checker on all files
 - `flake8` runs [flake8](https://flake8.pycqa.org/) code style checker on `*.py` files
+- `pydocstyle` runs [pydocstyle](http://www.pydocstyle.org/) docstring checker on `*.py` files
 - `pylint` runs [pylint](https://pylint.org/) code checker on `*.py` files
 - `mypy` runs [mypy](http://mypy-lang.org/) type checker on `*.py` files
 - `test` runs unit tests
