@@ -7,17 +7,21 @@ SOURCE_FILES = *.py
 whitespace-format-check:
 	# Check whitespace formatting.
 	whitespace-format --check-only --color --new-line-marker linux \
-			--add-new-line-marker-at-end-of-file --remove-trailing-whitespace \
+			--add-new-line-marker-at-end-of-file \
+			--remove-trailing-whitespace \
 			--remove-trailing-empty-lines \
 			--normalize-non-standard-whitespace replace \
+			--normalize-whitespace-only-files empty \
 			--exclude ".pyc$$"  *
 
 whitespace-format:
 	# Reformat code.
 	whitespace-format --color --new-line-marker linux \
-			--add-new-line-marker-at-end-of-file --remove-trailing-whitespace \
+			--add-new-line-marker-at-end-of-file \
+			--remove-trailing-whitespace \
 			--remove-trailing-empty-lines \
 			--normalize-non-standard-whitespace replace \
+			--normalize-whitespace-only-files empty \
 			--exclude ".pyc$$"  *
 
 black-check:
