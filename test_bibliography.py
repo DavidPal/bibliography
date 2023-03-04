@@ -1,8 +1,9 @@
-#!/usr/bin/env python
-
 """Unit tests for bibliography module."""
 
+import sys
+import tempfile
 import unittest
+from unittest.mock import patch
 
 import bibliography
 
@@ -74,6 +75,28 @@ class TestBibliography(unittest.TestCase):
         self.assertEqual("Article", bibliography.normalize_entry_type("  artIclE "))
         self.assertEqual("InProceedings", bibliography.normalize_entry_type("conference"))
         self.assertEqual("unknown", bibliography.normalize_entry_type("  unknown"))
+
+    def test_script(self):
+        """Tests the script."""
+        with tempfile.TemporaryDirectory(dir="./") as directory:
+            input_file_name = "sample.bib"
+            output_file_name = f"{directory}/output.bib"
+            command_line_arguments = [
+                "bibliography.py",
+                input_file_name,
+                "--output",
+                output_file_name,
+            ]
+            with patch.object(sys, "argv", command_line_arguments):
+                bibliography.main()
+
+            with open("sample.bib", encoding="utf-8") as file:
+                input_file_content = file.read()
+
+            with open(output_file_name, encoding="utf-8") as file:
+                output_file_content = file.read()
+
+            self.assertEqual(output_file_content, input_file_content)
 
 
 if __name__ == "__main__":

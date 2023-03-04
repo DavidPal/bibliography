@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bibliography"
-version = "0.1.2"
+version = "0.1.3"
 description = "Beautifier of BibTeX files"
 authors = ["David Pal <davidko.pal@gmail.com>"]
 

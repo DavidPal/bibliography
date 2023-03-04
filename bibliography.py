@@ -17,7 +17,9 @@ If you do not want the input file to be overwritten, use --output option:
 """
 
 import argparse
+import dataclasses
 import re
+from typing import Dict
 from typing import Optional
 
 # Dictionary mapping lower-case type of bibliographic entry to its proper spelling.
@@ -51,7 +53,7 @@ ENTRY_PRIORITIES = {
 # to its proper spelling.
 MONTHS = {
     "jan": "January",
-    "feb": "Februry",
+    "feb": "February",
     "mar": "March",
     "apr": "April",
     "may": "May",
@@ -166,19 +168,13 @@ def normalize_entry_type(entry_type: str) -> str:
     return ENTRY_TYPES[entry_type]
 
 
+@dataclasses.dataclass
 class Entry:
-    """Entry represents a bibliographic entry.
+    """Entry represents a bibliographic entry."""
 
-    Attributes:
-        entry_type
-        entry_name
-        fields
-    """
-
-    def __init__(self):
-        self.entry_type = "UNKNOWN"
-        self.entry_name = ""
-        self.fields = {}
+    entry_type: str = "UNKNOWN"
+    entry_name: str = ""
+    fields: Dict[str, str] = dataclasses.field(default_factory=dict)
 
     def parse_from_string(self, text: str) -> Optional[str]:
         """Parses the entry from a string that appears first in the string."""
@@ -233,7 +229,7 @@ class Entry:
         output += "\n"
         keys = sorted(self.fields.keys())
         for key in keys:
-            output += +4 * " "
+            output += 4 * " "
             output += key
             output += max(0, 13 - len(key)) * " "
             output += " = "
