@@ -1,7 +1,7 @@
 .PHONY: whitespace-format-check whitespace-format black-check pydocstyle black-format pylint flake8 isort-check isort-format mypy test coverage clean install-python create-environment delete-environment install-dependencies build-package
 
 PYTHON_ENVIRONMENT = "bibliography"
-PYTHON_VERSION = "3.10.7"
+PYTHON_VERSION = "3.8.5"
 SOURCE_FILES = *.py
 
 whitespace-format-check:

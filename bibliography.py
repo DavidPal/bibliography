@@ -20,7 +20,9 @@ import argparse
 import dataclasses
 import re
 from typing import Dict
+from typing import List
 from typing import Optional
+from typing import Tuple
 
 # Dictionary mapping lower-case type of bibliographic entry to its proper spelling.
 ENTRY_TYPES = {
@@ -84,7 +86,7 @@ def capitalize(text):
     return output
 
 
-def find_matching_closing_brace(text: str) -> tuple[str, str]:
+def find_matching_closing_brace(text: str) -> Tuple[str, str]:
     """Finds closing brace in a string that matches '{' + string."""
     nesting = 1
     end = 0
@@ -257,7 +259,7 @@ class Entry:
         return 0
 
 
-def parse_entries(text: str) -> list[Entry]:
+def parse_entries(text: str) -> List[Entry]:
     """Parses a list of bibliographic entries from a string."""
     entries = []
     while True:
@@ -269,7 +271,7 @@ def parse_entries(text: str) -> list[Entry]:
     return entries
 
 
-def read_file(file_name: str) -> tuple[list[str], str]:
+def read_file(file_name: str) -> Tuple[List[str], str]:
     """Reads content of a bibliography file."""
     comments = []
     lines = []
@@ -283,7 +285,7 @@ def read_file(file_name: str) -> tuple[list[str], str]:
     return comments, text
 
 
-def write_file(file_name: str, comments: list[str], entries: list[Entry]) -> None:
+def write_file(file_name: str, comments: List[str], entries: List[Entry]) -> None:
     """Writes text into a file."""
     with open(file_name, "w", encoding="utf-8") as file:
         if comments:
