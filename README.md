@@ -2,6 +2,8 @@
 
 [![CircleCI](https://circleci.com/gh/DavidPal/bibliography/tree/master.svg?style=svg)](https://circleci.com/gh/DavidPal/bibliography/tree/master)
 
+[![Build, lint and test](https://github.com/DavidPal/bibliography/actions/workflows/build.yaml/badge.svg)](https://github.com/DavidPal/bibliography/actions/workflows/build.yaml)
+
 Beautifier of BibTeX files.
 
 It has the following features:
@@ -28,19 +30,19 @@ python bibliography.py file.bib
     brew install poetry
     ```
 
-3) Create Python virtual environment with the correct Python version:
-   ```shell
-   make install-python
-   make create-environment
-   ```
-
-4) Add the following lines to `.zshrc` or `.bash_profile` and restart the terminal:
+3) Add the following lines to `.zshrc` or `.bash_profile` and restart the terminal:
    ```shell
    # Pyenv settings
    export PYENV_ROOT="$HOME/.pyenv"
    export PATH="$PYENV_ROOT/bin:$PATH"
    eval "$(pyenv init --path)"
    eval "$(pyenv virtualenv-init -)"
+   ```
+
+4) Create Python virtual environment with the correct Python version:
+   ```shell
+   make install-python
+   make create-environment
    ```
 
 5) Install all dependencies
