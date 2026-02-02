@@ -1,31 +1,68 @@
-[tool.poetry]
-name = "bibliography"
-version = "0.1.4"
+[project]
+name = "bibliograhy"
+version = "0.1.5"
 description = "Beautifier of BibTeX files"
-authors = ["David Pal <davidko.pal@gmail.com>"]
+authors = [{ name = "David Pal", email = "davidko.pal@gmail.com" }]
+readme = "README.md"
+license = "MIT"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.8.0"
 
-[tool.poetry.scripts]
-bibliography = "bibliography:main"
+[project.urls]
+Repository = "https://github.com/DavidPal/bibliography"
+Homepage = "https://github.com/DavidPal/bibliography"
 
-[tool.poetry.dependencies]
-python = "^3.8.1"
+[dependency-groups]
+dev = [
+    "coverage~=7.2.4; python_version < '3.12'",
+    "coverage>=7.13.2; python_version >= '3.12'",
 
-[tool.poetry.dev-dependencies]
-black = "^23.7.0"
-coverage = "^7.3.0"
-flake8 = "^6.1.0"
-flake8-absolute-import = "^1.0.0.1"
-isort = {extras = ["colors"], version = "^5.12.0"}
-mypy = "^1.5.1"
-pydocstyle = {extras = ["toml"], version = "^6.3.0"}
-pytest = "^7.4.1"
-pylint = "^2.17.5"
-pylint-quotes = "^0.2.3"
-whitespace-format = "^0.0.4"
+    "flake8~=5.0.4; python_version < '3.12'",
+    "flake8>=7.3.0; python_version >= '3.12'",
+
+    "mypy~=1.13.0; python_version < '3.12'",
+    "mypy>=1.19.1; python_version >= '3.12'",
+
+    "pydocstyle[toml]~=6.3.0; python_version < '3.12'",
+
+    "pylint~=2.17.7; python_version < '3.12'",
+    "pylint~=4.0.4; python_version >= '3.12'",
+
+    "pytest~=8.3.5; python_version < '3.12'",
+    "pytest>=9.0.2; python_version >= '3.12'",
+
+    "ruff>=0.14.14",
+]
+
+[project.scripts]
+whitespace-format = "bibliography:main"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+ignore-vcs = true
+only-include = ["whitespace_format.py", "README.md", "LICENSE"]
+
+[tool.uv]
+package = true
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+publish-url = "https://upload.pypi.org/legacy/"
+explicit = true
+
+[[tool.uv.index]]
+name = "test-pypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
 
 [tool.black]
 line-length = 100
@@ -38,7 +75,78 @@ line_length = 100
 multi_line_output = 3
 
 [tool.pydocstyle]
-# List of rules (error codes) that should be enforced by pydocstyle.
-# Complete list of codes can be found at: http://www.pydocstyle.org/en/stable/error_codes.html
+# List of rules (error codes) that pydocstyle should enforce.
+# The complete list of codes can be found at: http://www.pydocstyle.org/en/stable/error_codes.html
 # Keep the list below in lexicograhic order!
 select = "D101,D102,D103,D105,D200,D201,D204,D205,D206,D207,D208,D209,D210,D211,D212,D300,D400,D403,D405,D411,D416,D419"
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+
+[tool.ruff.format]
+line-ending = "lf"
+indent-style = "space"
+quote-style = "double"
+
+[tool.ruff.lint]
+preview = true
+explicit-preview-rules = false
+select = ["ALL"]
+ignore = [
+    "C901",
+    "CPY001",
+    "D301",
+    "E501",
+    "EM101",
+    "EM102",
+    "EXE002",
+    "FA100",
+    "FBT001",
+    "FBT003",
+    "FURB103",
+    "PLR0904",
+    "PLR0912",
+    "PLR0915",
+    "PLR2004",
+    "PLR5501",
+    "PT009",
+    "PTH123",
+    "Q003",
+    "T201",
+    "TRY003",
+    "UP006",
+    "UP015",
+    "UP024",
+    "UP035",
+    "UP045",
+]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.isort]
+force-single-line = true
+force-sort-within-sections = false
+from-first = false
+order-by-type = true
+
+[tool.ruff.lint.pylint]
+max-returns = 30
+max-locals = 20
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pydoclint]
+# Skip docstrings which fit on a single line.
+ignore-one-line-docstrings = true
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+strict_optional = true
+no_implicit_optional = true
+check_untyped_defs = true
