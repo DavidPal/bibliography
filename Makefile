@@ -27,7 +27,7 @@ NON_TEXT_FILES_REGEX = "\.pyc$$|\.git/|\.idea/|^\.venv/|^test_data/|^\.coverage$
 
 whitespace-format-check:
 	# Check whitespace formatting.
-	whitespace_format \
+	whitespace-format \
 			--check-only \
 			--color \
 			--verbose \
@@ -42,7 +42,7 @@ whitespace-format-check:
 
 whitespace-format:
 	# Reformat code.
-	whitespace_format \
+	whitespace-format \
 			--color \
 			--verbose \
 			--new-line-marker linux \
