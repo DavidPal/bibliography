@@ -41,7 +41,7 @@ dev = [
 ]
 
 [project.scripts]
-whitespace-format = "bibliography:main"
+bibliography = "bibliography:main"
 
 [build-system]
 requires = ["hatchling"]
