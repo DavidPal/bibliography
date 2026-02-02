@@ -21,31 +21,29 @@ jobs:
           echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
 
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Print more information
         run: |
           echo "The ${{ github.repository }} repository has been cloned to the runner."
           echo "The workflow is now ready to test your code on the runner."
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Install uv and set the Python version
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
+          activate-environment: "true"
 
       - name: Print Python version
-        run: |
-          python --version
+        run: python --version
 
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip --verbose install poetry==1.6.1
-          poetry config virtualenvs.create false
-          make install-dependencies
+      - name: Check lock file consistency
+        run: make check-lock-file
+
+      - name: Install the project dependencies
+        run: make install-dependencies
 
       - name: Lint and test code
-        run: |
-          make clean whitespace-format-check isort-check black-check pydocstyle flake8 pylint mypy test coverage
+        run: make clean lint test coverage
 
       - run: echo "This job's status is ${{ job.status }}."

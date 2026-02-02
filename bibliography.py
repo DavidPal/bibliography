@@ -211,8 +211,8 @@ class Entry:
         if text[0] == "{":
             value, rest = find_matching_closing_brace(text)
             value = remove_braces(value)
-        elif text[0] == "\"":
-            match = re.match("^\"([^\"]+)\"\\s*,?\\s*", text)
+        elif text[0] == '"':
+            match = re.match('^"([^"]+)"\\s*,?\\s*', text)
             value = match.group(1)  # type: ignore[union-attr]
             rest = text[match.end() :]  # type: ignore[union-attr]
         else:
