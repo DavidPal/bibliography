@@ -49,7 +49,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build]
 ignore-vcs = true
-only-include = ["whitespace_format.py", "README.md", "LICENSE"]
+only-include = ["bibliography.py"]
 
 [tool.uv]
 package = true
