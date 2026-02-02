@@ -46,7 +46,7 @@ limit-inference-results=100
 
 # List of plugins (as comma separated values of python module names) to load,
 # usually to register additional checkers.
-load-plugins=pylint_quotes,pylint.extensions.docstyle,pylint.extensions.docparams,pylint.extensions.no_self_use
+load-plugins=pylint.extensions.docstyle,pylint.extensions.docparams,pylint.extensions.no_self_use
 
 # Pickle collected data for later comparisons.
 persistent=no
@@ -90,7 +90,13 @@ disable=raw-checker-failed,
         suppressed-message,
         useless-suppression,
         deprecated-pragma,
-        use-symbolic-message-instead
+        use-symbolic-message-instead,
+        duplicate-code,
+        too-many-return-statements,
+        fixme,
+        too-many-branches,
+        too-many-statements,
+        too-many-public-methods,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -361,10 +367,10 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=100
+max-line-length=120
 
 # Maximum number of lines in a module.
-max-module-lines=1000
+max-module-lines=5000
 
 # Allow the body of a class to be on the same line as the declaration if body
 # contains single statement.
@@ -469,18 +475,6 @@ spelling-private-dict-file=
 spelling-store-unknown-words=no
 
 
-[STRING_QUOTES]
-
-# The quote character for triple-quoted docstrings.
-docstring-quote=double
-
-# The quote character for string literals.
-string-quote=double
-
-# The quote character for triple-quoted strings (non-docstring).
-triple-quote=double
-
-
 [DESIGN]
 
 # List of regular expressions of class ancestor names to ignore when counting
@@ -504,7 +498,7 @@ max-bool-expr=5
 max-branches=12
 
 # Maximum number of locals for function / method body.
-max-locals=15
+max-locals=20
 
 # Maximum number of parents for a class (see R0901).
 max-parents=7

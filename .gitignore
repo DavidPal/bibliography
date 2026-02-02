@@ -3,21 +3,27 @@
 __pycache__/
 .cache/
 
+# Python package
+dist/
+*.egg-info/
+
 # PyCharm files
 .idea/
+
+# VSCode files
+.vscode/
 
 # Vim temporary files
 *.swp
 *.swo
 
-# Pyenv files
-.python-version
-
 # Mypy files
 .mypy_cache/
+
+# Pytest files
+.pytest_cache/
 
 # Coverage files
 .coverage
 coverage.xml
-.pytest_cache/
 pytest_results/

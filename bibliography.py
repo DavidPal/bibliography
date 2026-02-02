@@ -3,7 +3,7 @@
 """BibTeX bibliography beautifier.
 
 Author: David Pal <davidko.pal@gmail.com>
-Date: 2013-2023
+Date: 2013 - 2026
 
 Usage:
 
@@ -51,7 +51,7 @@ ENTRY_PRIORITIES = {
     "Book": 99,
 }
 
-# Dictionary mapping a lower-case 3 letter prefix of a calendar month
+# Dictionary mapping a lower-case three-letter prefix of a calendar month
 # to its proper spelling.
 MONTHS = {
     "jan": "January",
@@ -69,20 +69,21 @@ MONTHS = {
 }
 
 
-def format_text(text):
+def format_text(text: str) -> str:
     """Removes unnecessary white space between words."""
     return " ".join(text.split())
 
 
-def capitalize(text):
+def capitalize(text: str) -> str:
     """Capitalizes initial letters in words in a string."""
     word_start = True
     output = ""
     for char in text.lower():
         if word_start:
-            char = char.upper()
+            output += char.upper()
+        else:
+            output += char
         word_start = not char.isalpha()
-        output += char
     return output
 
 
@@ -92,13 +93,13 @@ def find_matching_closing_brace(text: str) -> Tuple[str, str]:
     end = 0
     for i in range(1, len(text)):
         if text[i] == "{":
-            nesting = nesting + 1
+            nesting += 1
         elif text[i] == "}":
-            nesting = nesting - 1
+            nesting -= 1
         end = i
         if nesting == 0:
             break
-    end = end + 1
+    end += 1
     return text[:end], text[end:]
 
 
@@ -155,7 +156,7 @@ def normalize_year(text: str) -> str:
 
 
 def normalize_month(text: str) -> str:
-    """Puts name of a month into canonical form."""
+    """Puts the name of a month into canonical form."""
     prefix = text[:3].lower()
     if prefix in MONTHS:
         return MONTHS[prefix]
@@ -180,7 +181,7 @@ class Entry:
 
     def parse_from_string(self, text: str) -> Optional[str]:
         """Parses the entry from a string that appears first in the string."""
-        match = re.match("\\s*@\\s*(\\w+)\\s*({)\\s*", text)
+        match = re.match("\\s*@\\s*(\\w+)\\s*({)\\s*", text)  # noqa: RUF039
         if not match:
             return None
         self.entry_type = match.group(1)
@@ -188,7 +189,7 @@ class Entry:
         text = text[match.end(2) :]
         text, rest = find_matching_closing_brace(text)
 
-        match = re.match("\\s*([^\\s]+)\\s*,\\s*", text)
+        match = re.match("\\s*([^\\s]+)\\s*,\\s*", text)  # noqa: RUF039
         if match:
             self.entry_name = match.group(1)
             text = text[match.end() :]
@@ -199,7 +200,7 @@ class Entry:
 
     def parse_field(self, text: str) -> Optional[str]:
         """Parses the field of an entry from a string that appears first in the string."""
-        match = re.match("\\s*,?\\s*([\\w-]+)\\s*=\\s*", text)
+        match = re.match("\\s*,?\\s*([\\w-]+)\\s*=\\s*", text)  # noqa: RUF039
         if not match:
             return None
         key = match.group(1)
@@ -211,19 +212,19 @@ class Entry:
         if text[0] == "{":
             value, rest = find_matching_closing_brace(text)
             value = remove_braces(value)
-        elif text[0] == "\"":
-            match = re.match("^\"([^\"]+)\"\\s*,?\\s*", text)
+        elif text[0] == '"':
+            match = re.match('^"([^"]+)"\\s*,?\\s*', text)  # noqa: RUF039
             value = match.group(1)  # type: ignore[union-attr]
             rest = text[match.end() :]  # type: ignore[union-attr]
         else:
-            match = re.match("\\s*(\\w+)\\s*,?\\s*", text)
+            match = re.match("\\s*(\\w+)\\s*,?\\s*", text)  # noqa: RUF039
             value = match.group(1)  # type: ignore[union-attr]
             rest = text[match.end() :]  # type: ignore[union-attr]
 
         self.fields[key] = value.strip()
         return rest
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns the BibTeX representation of the entry."""
         output = "@" + self.entry_type + "{"
         if self.entry_name:
@@ -237,7 +238,7 @@ class Entry:
             output += " = "
             value = self.fields[key]
             if self.entry_type != "String":
-                if key in ["Author", "Editor"]:
+                if key in {"Author", "Editor"}:
                     value = normalize_authors(value)
                 if key == "Pages":
                     value = normalize_pages(value)
@@ -252,7 +253,7 @@ class Entry:
             output += "\n"
         return output + "}"
 
-    def priority(self):
+    def priority(self) -> int:
         """Returns the sort priority of the entry."""
         if self.entry_type in ENTRY_PRIORITIES:
             return ENTRY_PRIORITIES[self.entry_type]
@@ -295,7 +296,7 @@ def write_file(file_name: str, comments: List[str], entries: List[Entry]) -> Non
         file.write("\n")
 
 
-def main():
+def main() -> None:
     """Reads the input bibliography file and outputs its properly formatted version."""
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="bibliographic file")
@@ -307,10 +308,7 @@ def main():
     print("Parsing entries...")
     entries = parse_entries(text)
     entries.sort(key=lambda entry: (entry.priority(), entry.entry_type, entry.entry_name))
-    if parsed_arguments.output:
-        output_file = parsed_arguments.output
-    else:
-        output_file = parsed_arguments.input
+    output_file = parsed_arguments.output or parsed_arguments.input
     print(f"Writing file '{output_file}' ...")
     write_file(output_file, comments, entries)
 
